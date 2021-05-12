@@ -4,30 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CheatActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
         tools:context='com.example.geoquiz.CheatActivity'>
+
         <TextView
-            android:text="@string/warning_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="24dp">
-        </TextView>
+            android:padding="24dp"
+            android:text="@string/warning_test"></TextView>
+
         <TextView
             android:id="@+id/answer_text_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="24dp"
-            tools:text="Answer">
-        </TextView>
+            tools:text="Answer"></TextView>
+
         <Button
             android:id="@+id/show_answer_button"
-            android:text="@string/show_answer_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </Button>
+            android:layout_height="wrap_content"
+            android:text="@string/show_answer_button"></Button>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

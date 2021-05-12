@@ -13,6 +13,7 @@ private const val TAG = "QuizViewModel"
 class QuizViewModel : ViewModel() {
 
     var currentIndex = 0
+    var isCheater = false
 
     // Creates a list of questions
     private val questionBank = listOf(

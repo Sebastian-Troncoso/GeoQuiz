@@ -1,10 +1,10 @@
 package com.example.geoquiz
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private val quizViewModel: QuizViewModel by lazy {
         ViewModelProviders.of(this).get(QuizViewModel::class.java)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate(Bundle?) called")
@@ -77,10 +78,12 @@ class MainActivity : AppCompatActivity() {
         cheatButton.setOnClickListener {
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+
             startActivityForResult(intent, REQUEST_CODE_CHEAT)
         }
         updateQuestion()
     }
+
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart() called")
@@ -90,23 +93,28 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         Log.d(TAG, "onResume() called")
     }
+
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause() called")
     }
+
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
         Log.i(TAG, "onSaveInstanceState")
         savedInstanceState.putInt(KEY_INDEX, quizViewModel.currentIndex)
     }
+
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop() called")
     }
+
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy() called")
     }
+
     // Updates the text view
     private fun updateQuestion() {
         trueButton.isClickable = true
@@ -114,15 +122,17 @@ class MainActivity : AppCompatActivity() {
         val questionTextResId = quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
     }
-    // Checks if the user's answer is correct or not
+
+    // Checks if the user's answer is correct or not, or if the user cheated
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = quizViewModel.currentQuestionAnswer
-        val messageResId: Int
-        if (userAnswer == correctAnswer) {
-            score++
-            messageResId = R.string.correct_toast
-        } else {
-            messageResId = R.string.incorrect_toast
+        val messageResId = when {
+            quizViewModel.isCheater -> R.string.judgment_toast
+            userAnswer == correctAnswer -> {
+                R.string.correct_toast
+                score++
+            }
+            else -> R.string.incorrect_toast
         }
         if (quizViewModel.checkLastQuestion()) {
             Handler().postDelayed({
@@ -133,6 +143,17 @@ class MainActivity : AppCompatActivity() {
         val toast = Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
         toast.setGravity(Gravity.TOP, 0, 200)
         toast.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            quizViewModel.isCheater =
+                data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+        }
     }
 }
 
